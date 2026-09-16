@@ -40,7 +40,55 @@
                         <TextBlock Text="▶" HorizontalAlignment="Center"></TextBlock>
                     </Button>
                 </StackPanel>
-                <Slider Margin="10,10,10,0" BorderThickness="5"></Slider>
+                <Slider Margin="10,10,10,0" Height="20" Minimum="0" Maximum="100" Value="20">
+                    <Slider.Resources>
+                        <Style x:Key="BlueThumb" TargetType="Thumb">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Thumb">
+                                        <Rectangle Fill="Blue" Width="10" Height="10"></Rectangle>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                        <Style x:Key="IncreaseButton" TargetType="RepeatButton">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="RepeatButton">
+                                        <Border Background="Black" Height="1"></Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                        <Style x:Key="DecreaseButton" TargetType="RepeatButton">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="RepeatButton">
+                                        <Border Background="Black" Height="1"></Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Slider.Resources>
+
+                    <Slider.Template>
+                        <ControlTemplate TargetType="Slider">
+                            <Grid Height="20">
+                                <Track HorizontalAlignment="Stretch">
+                                    <Track.Thumb>
+                                        <Thumb Style="{StaticResource BlueThumb}"></Thumb>
+                                    </Track.Thumb>
+                                    <Track.IncreaseRepeatButton>
+                                        <RepeatButton Style="{StaticResource IncreaseButton}"></RepeatButton>
+                                    </Track.IncreaseRepeatButton>
+                                    <Track.DecreaseRepeatButton>
+                                        <RepeatButton Style="{StaticResource DecreaseButton}"></RepeatButton>
+                                    </Track.DecreaseRepeatButton>
+                                </Track>
+                            </Grid>
+                        </ControlTemplate>
+                    </Slider.Template>
+                </Slider>
                 <TextBox Height="120" Margin="5,10,5,5"></TextBox>
             </StackPanel>
             <Image Source="{Binding}"></Image>
