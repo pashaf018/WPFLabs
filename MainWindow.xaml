@@ -8,8 +8,8 @@
         Title="MainWindow" Height="500" Width="700">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"></RowDefinition>
-            <RowDefinition Height="20*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid Grid.Row="1" x:Name="BottomGrid">
             <Grid.ColumnDefinitions>
