@@ -6,102 +6,52 @@
         xmlns:local="clr-namespace:WPFLabs"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="700">
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="1*"></RowDefinition>
-			<RowDefinition Height="20*"></RowDefinition>
-		</Grid.RowDefinitions>
-		<Grid Grid.Row="1">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="4*"></ColumnDefinition>
-				<ColumnDefinition Width="10*"></ColumnDefinition>
-			</Grid.ColumnDefinitions>
-			<StackPanel Grid.Column="0" Background="Gainsboro">
-				<Button Margin="10,15,10,15" Padding="0,10,0,10">
-					<TextBlock Text="Сгенерировать граф"></TextBlock>
-				</Button>
-				<Button Margin="10,0,10,10" Padding="0,10,0,10">
-					<TextBlock Text="Описание алгоритма Дэйкстры"></TextBlock>
-				</Button>
-				<Button Margin="10,0,10,10" Padding="0,10,0,10">
-					<TextBlock Text="Начать алгоритм Дэйкстры"></TextBlock>
-				</Button>
-				<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-					<Button Margin="0,0,15,0" Padding="10,10,10,10">
-						<TextBlock Text="Play"></TextBlock>
-					</Button>
-					<Button Margin="0,0,15,0" Padding="10,10,10,10">
-						<TextBlock Text="Pause"></TextBlock>
-					</Button>
-					<Button Padding="10,10,10,10">
-						<TextBlock Text="Stop"></TextBlock>
-					</Button>
-				</StackPanel>
-				<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-					<Button Margin="0,10,15,0">
-						<TextBlock Text="◀" HorizontalAlignment="Center"></TextBlock>
-					</Button>
-					<Button Margin="0,10,0,0">
-						<TextBlock Text="▶" HorizontalAlignment="Center"></TextBlock>
-					</Button>
-				</StackPanel>
-				<Slider Margin="10,10,10,0" Minimum="0" Maximum="100" Value="20">
-					<Slider.Resources>
-						<Style x:Key="BlueThumb" TargetType="Thumb">
-							<Setter Property="Template">
-								<Setter.Value>
-									<ControlTemplate TargetType="Thumb">
-										<Rectangle Fill="Blue"></Rectangle>
-									</ControlTemplate>
-								</Setter.Value>
-							</Setter>
-						</Style>
-						<Style x:Key="IncreaseButton" TargetType="RepeatButton">
-							<Setter Property="Template">
-								<Setter.Value>
-									<ControlTemplate TargetType="RepeatButton">
-										<Border Background="Black"></Border>
-									</ControlTemplate>
-								</Setter.Value>
-							</Setter>
-						</Style>
-						<Style x:Key="DecreaseButton" TargetType="RepeatButton">
-							<Setter Property="Template">
-								<Setter.Value>
-									<ControlTemplate TargetType="RepeatButton">
-										<Border Background="Black"></Border>
-									</ControlTemplate>
-								</Setter.Value>
-							</Setter>
-						</Style>
-					</Slider.Resources>
-
-					<Slider.Template>
-						<ControlTemplate TargetType="Slider">
-							<Track HorizontalAlignment="Stretch">
-								<Track.Thumb>
-									<Thumb Style="{StaticResource BlueThumb}"></Thumb>
-								</Track.Thumb>
-								<Track.IncreaseRepeatButton>
-									<RepeatButton Style="{StaticResource IncreaseButton}"></RepeatButton>
-								</Track.IncreaseRepeatButton>
-								<Track.DecreaseRepeatButton>
-									<RepeatButton Style="{StaticResource DecreaseButton}"></RepeatButton>
-								</Track.DecreaseRepeatButton>
-							</Track>
-						</ControlTemplate>
-					</Slider.Template>
-				</Slider>
-				<TextBox Margin="5,10,5,5"></TextBox>
-			</StackPanel>
-		</Grid>
-		<Grid>
-			<Menu Grid.Row="0" Background="Gainsboro">
-				<MenuItem Header="Файл"></MenuItem>
-			</Menu>
-			<Grid>
-				<Canvas Grid.Row="1" Grid.Column="1"></Canvas>
-			</Grid>
-		</Grid>
-	</Grid>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="20*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="1" x:Name="BottomGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*"></ColumnDefinition>
+                <ColumnDefinition Width="10*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Background="Gainsboro">
+                <Button Margin="10,15,10,15" Padding="0,10,0,10">
+                    <TextBlock Text="Сгенерировать граф"></TextBlock>
+                </Button>
+                <Button Margin="10,0,10,10" Padding="0,10,0,10">
+                    <TextBlock Text="Описание алгоритма Дэйкстры"></TextBlock>
+                </Button>
+                <Button Margin="10,0,10,10" Padding="0,10,0,10">
+                    <TextBlock Text="Начать алгоритм Дэйкстры"></TextBlock>
+                </Button>
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                    <Button Margin="0,0,15,0" Padding="10,10,10,10">
+                        <TextBlock Text="Play"></TextBlock>
+                    </Button>
+                    <Button Margin="0,0,15,0" Padding="10,10,10,10">
+                        <TextBlock Text="Pause"></TextBlock>
+                    </Button>
+                    <Button Padding="10,10,10,10">
+                        <TextBlock Text="Stop"></TextBlock>
+                    </Button>
+                </StackPanel>
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                    <Button Margin="0,10,15,0">
+                        <TextBlock Text="◀" HorizontalAlignment="Center"></TextBlock>
+                    </Button>
+                    <Button Margin="0,10,0,0">
+                        <TextBlock Text="▶" HorizontalAlignment="Center"></TextBlock>
+                    </Button>
+                </StackPanel>
+                <Slider Margin="10,10,10,0" Minimum="0" Maximum="100" Value="20"></Slider>
+                <TextBox Margin="5,10,5,5"></TextBox>
+            </StackPanel>
+            <Canvas Grid.Column="1"></Canvas>
+        </Grid>
+        <Menu Grid.Row="0" Background="Gainsboro">
+            <MenuItem Header="Файл"></MenuItem>
+        </Menu>
+    </Grid>
 </Window>
