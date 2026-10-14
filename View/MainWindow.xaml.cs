@@ -12,8 +12,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WPFLabs;
+using WPFLabs.ViewModel;
 
-namespace WPFLabs
+namespace WPFLabs.View
 {
 	/// <summary>
 	/// Логика взаимодействия для MainWindow.xaml
@@ -23,6 +25,15 @@ namespace WPFLabs
 		public MainWindow()
 		{
 			InitializeComponent();
+		}
+
+		private void MainImage_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
+		{
+			if (this.DataContext is MainWindowViewModel viewModel)
+			{
+				viewModel.CanvasWidth = (int)e.NewSize.Width;
+				viewModel.CanvasHeight = (int)e.NewSize.Height;
+			}
 		}
 	}
 }

@@ -1,11 +1,20 @@
-﻿<Window x:Class="WPFLabs.MainWindow"
+﻿<Window x:Class="WPFLabs.View.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WPFLabs"
+        xmlns:local="clr-namespace:WPFLabs.ViewModel" d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel}"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="700">
+
+    <Window.DataContext>
+        <local:MainWindowViewModel/>
+    </Window.DataContext>
+
+    <Window.Resources>
+        
+    </Window.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
@@ -18,13 +27,32 @@
             </Grid.ColumnDefinitions>
             <Border Grid.Column="0" BorderBrush="Gray" BorderThickness="3">
                 <StackPanel Background="Gainsboro">
-                    <Button Margin="10,15,10,15" Padding="0,10,0,10" Background="LightGray">
+                    <Button Margin="10,15,10,15" Padding="0,10,0,10" Background="LightGray" Command="{Binding GenerateGraph}">
                         <TextBlock Text="Сгенерировать граф"></TextBlock>
                     </Button>
-                    <Button Margin="10,0,10,10" Padding="0,10,0,10" Background="LightGray">
+                    <Button Margin="10,0,10,10" Padding="0,10,0,10" Background="LightGray" Command="{Binding ShowDesc}">
                         <TextBlock Text="Описание алгоритма Дэйкстры"></TextBlock>
                     </Button>
-                    <Button Margin="10,0,10,10" Padding="0,10,0,10" Background="LightGray">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Откуда: " Margin="5,0,5,0"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="Куда: " Margin="5,0,5,0"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding NumericUpDownFrom}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="3" Text="{Binding NumericUpDownTo}"/>
+                        <Slider Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,0,5,0" Background="LightGray"/>
+                        <Slider Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="5,0,5,0" Background="LightGray"/>
+                    </Grid>
+                    <Button Margin="10,10,10,10" Padding="0,10,0,10" Background="LightGray" Command="{Binding }">
                         <TextBlock Text="Начать алгоритм Дэйкстры"></TextBlock>
                     </Button>
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
@@ -51,7 +79,7 @@
                 </StackPanel>
             </Border>
             <Border Grid.Column="1" BorderBrush="Gray" BorderThickness="3">
-                <Canvas></Canvas>
+                <Image x:Name="MainImage" Source="{Binding BitmapSource}" Stretch="Fill" SizeChanged="MainImage_SizeChanged"/>
             </Border>
         </Grid>
         <Menu Background="Gainsboro" BorderThickness="2" BorderBrush="Black">
