@@ -12,9 +12,9 @@ namespace WPFLabs.Model.Starters
 	{
 		public Color _colorEdge { get; private set; }
 		public Color _colorVertex { get; private set; }
-		public AlgorithmStep _currentStep { get; private set; }
+		public AlgorithmStep? _currentStep { get; private set; }
 
-		public string _info { get; private set; }
+		public string? _info { get; private set; }
 
 		public ShowStepReturnable(Color colorEdge, Color colorVertex, AlgorithmStep currentStep, string info)
 		{

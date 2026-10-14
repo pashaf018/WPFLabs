@@ -1,10 +1,13 @@
-﻿using WPFLabs.Drawings;
+﻿using System;
+using WPFLabs.Drawings;
 using WPFLabs.Model.Starters;
 
 namespace WPFLabs.Starters
 {
 	public interface IProgramStarter
 	{
+		public event Action<ShowStepReturnable> StepChanged;
+
 		public void StartAlgorithm(int interval);
 
 		public ShowStepReturnable ShowStep();

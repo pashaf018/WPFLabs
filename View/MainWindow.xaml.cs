@@ -35,5 +35,29 @@ namespace WPFLabs.View
 				viewModel.CanvasHeight = (int)e.NewSize.Height;
 			}
 		}
+
+		private void SliderFrom_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		{
+			if (this.DataContext is MainWindowViewModel viewModel)
+			{
+				viewModel.NumericUpDownFrom = (int)e.NewValue;
+			}
+		}
+
+		private void SliderTo_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		{
+			if (this.DataContext is MainWindowViewModel viewModel)
+			{
+				viewModel.NumericUpDownTo = (int)e.NewValue;
+			}
+		}
+
+		private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		{
+			if (this.DataContext is MainWindowViewModel viewModel)
+			{
+				viewModel.SliderSpeed = (int)e.NewValue;
+			}
+		}
 	}
 }

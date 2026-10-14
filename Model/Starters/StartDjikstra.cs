@@ -26,6 +26,8 @@ namespace WPFLabs.Starters
 
 		private int Answer = -1;
 
+		public event Action<ShowStepReturnable> StepChanged;
+
 		public StartDjikstra(BaseAlgorithm algorithm)
 		{
 			_steps = algorithm.StartAlgorithm();
@@ -144,7 +146,8 @@ namespace WPFLabs.Starters
 				return;
 			}
 
-			ShowStep();
+			var stepData = ShowStep();
+			StepChanged?.Invoke(stepData);
 		}
 
 		public void ShowPreviousStep()
@@ -156,16 +159,19 @@ namespace WPFLabs.Starters
 				return;
 			}
 
-			ShowStep();
+			var stepData = ShowStep();
+			StepChanged?.Invoke(stepData);
 		}
 
 		public void StartAlgorithm(int interval)
 		{
+			_timer?.Stop();
 			_timer = new();
 			_timer.Interval = TimeSpan.FromMilliseconds(interval);
 			_timer.Tick += (s,e) => ShowNextStep();
 			_timer.Start();
-			ShowStep();
+			var stepData = ShowStep();
+			StepChanged?.Invoke(stepData);
 		}
 
 		public void ChangeSpeed(int interval)

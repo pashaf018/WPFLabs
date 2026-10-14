@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Input;
-using WPFLabs.Drawings;
-using WPFLabs.MVVM;
 using System.Drawing;
-using System.Windows.Media.Imaging;
-using System.Windows.Interop;
+using System.Security.Cryptography;
 using System.Windows;
+using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Media.Imaging;
+using WPFLabs.Algorithms;
+using WPFLabs.Drawings;
+using WPFLabs.Model.Starters;
+using WPFLabs.MVVM;
+using WPFLabs.Starters;
 
 namespace WPFLabs.ViewModel
 {
@@ -14,20 +18,31 @@ namespace WPFLabs.ViewModel
 	{
 		private string defaultImagePath = @"C:\WaitingCat.jpg";
 		private DrawingGraph _drawingGraph;
+		private BaseAlgorithm _algorithm;
+		private IProgramStarter _programStarter;
 		private BitmapSource _bitmapSource;
 		private BitmapSource _graphImage;
 		private int _canvasHeight;
 		private int _canvasWidth;
 		private int numericUpDownFrom;
 		private int numericUpDownTo;
+		private int _maximumSliderValue;
+		private string _textInfo;
+		private int _sliderSpeed;
 
 		public int CanvasHeight { get => _canvasHeight; set { _canvasHeight = value; } }
 
 		public int CanvasWidth { get => _canvasWidth; set { _canvasWidth = value; } }
 
-		public int NumericUpDownTo { get => numericUpDownTo; set { numericUpDownTo = value; OnPropertyChanged(); } }
+		public int NumericUpDownTo { get => numericUpDownTo; set { numericUpDownTo = value; } }
 
-		public int NumericUpDownFrom { get => numericUpDownFrom; set { numericUpDownFrom = value; OnPropertyChanged(); } }
+		public int NumericUpDownFrom { get => numericUpDownFrom; set { numericUpDownFrom = value; } }
+
+		public int MaximumSliderValue { get => _maximumSliderValue; set { _maximumSliderValue = value; OnPropertyChanged(); } }
+
+		public string TextInfo { get => _textInfo; set { _textInfo = value; OnPropertyChanged(); } }
+
+		public int SliderSpeed { get => _sliderSpeed; set { _sliderSpeed = value; ChangeAlgorithmSpeed(); } }
 
 		public BitmapSource GraphImage
 		{
@@ -66,16 +81,20 @@ namespace WPFLabs.ViewModel
 		public ICommand GenerateGraph { get; }
 		public ICommand ShowDesc { get; }
 		public ICommand StartAlgorithm { get; }
+		public ICommand PauseAlgorithm { get; }
+		public ICommand StopAlgorithm { get; }
 
 		public MainWindowViewModel()
 		{
 			GenerateGraph = new RelayCommand(GenerateGraphLogic);
 			ShowDesc = new RelayCommand(ShowDescription);
+			StartAlgorithm = new RelayCommand(StartDjikstraAlgorithm);
+			PauseAlgorithm = new RelayCommand(PauseDjikstraAlgorithm);
+			StopAlgorithm = new RelayCommand(StopDjikstraAlgorithm);
 		}
 
 		private void GenerateGraphLogic(object parameter)
 		{
-			IntPtr hBitmap = IntPtr.Zero;
 			try
 			{
 				_drawingGraph = new((int)CanvasWidth, (int)CanvasHeight);
@@ -111,17 +130,13 @@ namespace WPFLabs.ViewModel
 					}
 				}
 
-				Bitmap image = _drawingGraph?.DrawGraph(Color.Black, Color.Black);
-				hBitmap = image.GetHbitmap();
-				BitmapSource = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+				DrawGraph(new ShowStepReturnable(Color.Black,Color.Black,null,null));
+
+				MaximumSliderValue = _drawingGraph.Vertexes.Count - 1;
 			}
 			catch (Exception ex)
 			{
 				MessageBox.Show(ex.Message);
-			}
-			finally
-			{
-				DeleteObject(hBitmap);
 			}
 		}
 
@@ -144,7 +159,80 @@ namespace WPFLabs.ViewModel
 				return;
 			}
 
+			try
+			{
+				_algorithm = new DjikstraAlgorithm(_drawingGraph, NumericUpDownFrom, NumericUpDownTo);
 
+				if (_programStarter == null)
+				{
+					_programStarter = new StartDjikstra(_algorithm);
+					_programStarter.StepChanged += DrawGraph;
+				}
+
+				_programStarter.StartAlgorithm(SliderSpeed * 100);
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message);
+			}
+		}
+
+		private void PauseDjikstraAlgorithm(object parameter)
+		{
+			try
+			{
+				_programStarter.StopAlgorithm();
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message);
+			}
+		}
+
+		private void StopDjikstraAlgorithm(object parameter)
+		{
+			try
+			{
+				_programStarter.StopAlgorithm();
+				_programStarter = null;
+				TextInfo = string.Empty;
+
+				DrawGraph(new ShowStepReturnable(Color.Black,Color.Black,null,null));
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message);
+			}
+		}
+
+		private void ChangeAlgorithmSpeed()
+		{
+			if (_programStarter == null)
+			{
+				return;
+			}
+
+			_programStarter.ChangeSpeed(SliderSpeed * 100);
+		}
+
+		private void DrawGraph(ShowStepReturnable parameters)
+		{
+			IntPtr hBitmap = IntPtr.Zero;
+			try
+			{
+				Bitmap image = _drawingGraph?.DrawGraph(parameters._colorEdge, parameters._colorVertex, parameters._currentStep?.HighlightedEdge, parameters._currentStep?.HighlightedVertex);
+				hBitmap = image.GetHbitmap();
+				BitmapSource = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+				TextInfo = parameters._info;
+			}
+			catch(Exception ex)
+			{
+				MessageBox.Show(ex.Message);
+			}
+			finally
+			{
+				DeleteObject(hBitmap);
+			}
 		}
 
 		[System.Runtime.InteropServices.DllImport("gdi32.dll")]

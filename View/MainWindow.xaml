@@ -12,7 +12,16 @@
     </Window.DataContext>
 
     <Window.Resources>
-        
+        <Style x:Key="ButtonTextStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Rubik"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Margin" Value="0,10,0,10"/>
+        </Style>
+        <Style x:Key="MainTextStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Rubik"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontWeight" Value="Heavy"/>
+        </Style>
     </Window.Resources>
     
     <Grid>
@@ -27,11 +36,11 @@
             </Grid.ColumnDefinitions>
             <Border Grid.Column="0" BorderBrush="Gray" BorderThickness="3">
                 <StackPanel Background="Gainsboro">
-                    <Button Margin="10,15,10,15" Padding="0,10,0,10" Background="LightGray" Command="{Binding GenerateGraph}">
-                        <TextBlock Text="Сгенерировать граф"></TextBlock>
+                    <Button Margin="10,15,10,15" Command="{Binding GenerateGraph}">
+                        <TextBlock Text="Сгенерировать граф" Style="{StaticResource ButtonTextStyle}"></TextBlock>
                     </Button>
-                    <Button Margin="10,0,10,10" Padding="0,10,0,10" Background="LightGray" Command="{Binding ShowDesc}">
-                        <TextBlock Text="Описание алгоритма Дэйкстры"></TextBlock>
+                    <Button Margin="10,0,10,10" Background="LightGray" Command="{Binding ShowDesc}">
+                        <TextBlock Text="Описание алгоритма" Style="{StaticResource ButtonTextStyle}"></TextBlock>
                     </Button>
                     <Grid>
                         <Grid.RowDefinitions>
@@ -45,25 +54,25 @@
                             <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Откуда: " Margin="5,0,5,0"/>
-                        <TextBlock Grid.Row="0" Grid.Column="2" Text="Куда: " Margin="5,0,5,0"/>
-                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding NumericUpDownFrom}"/>
-                        <TextBlock Grid.Row="0" Grid.Column="3" Text="{Binding NumericUpDownTo}"/>
-                        <Slider Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,0,5,0" Background="LightGray"/>
-                        <Slider Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="5,0,5,0" Background="LightGray"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource MainTextStyle}" Text="Откуда: " Margin="5,0,5,0"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Style="{StaticResource MainTextStyle}" Text="Куда: " Margin="5,0,5,0" HorizontalAlignment="Right"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource MainTextStyle}" Text="{Binding ElementName=SliderFrom, Path=Value}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="3" Style="{StaticResource MainTextStyle}" Text="{Binding ElementName=SliderTo, Path=Value}"/>
+                        <Slider x:Name="SliderFrom" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,0,5,0" Background="LightGray" Minimum="0" Maximum="{Binding MaximumSliderValue, UpdateSourceTrigger=PropertyChanged}" ValueChanged="SliderFrom_ValueChanged" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                        <Slider x:Name="SliderTo" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="5,0,5,0" Background="LightGray" Minimum="0" Maximum="{Binding MaximumSliderValue, UpdateSourceTrigger=PropertyChanged}" ValueChanged="SliderTo_ValueChanged" TickFrequency="1" IsSnapToTickEnabled="True"/>
                     </Grid>
-                    <Button Margin="10,10,10,10" Padding="0,10,0,10" Background="LightGray" Command="{Binding }">
-                        <TextBlock Text="Начать алгоритм Дэйкстры"></TextBlock>
+                    <Button Margin="10,10,10,10" Background="LightGray" Command="{Binding StartAlgorithm}">
+                        <TextBlock Text="Начать алгоритм" Style="{StaticResource ButtonTextStyle}"></TextBlock>
                     </Button>
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                        <Button Margin="0,0,15,0" Padding="10,10,10,10" Background="MediumSeaGreen">
-                            <TextBlock Text="Play"></TextBlock>
+                        <Button Margin="0,0,15,0" Padding="10,0,10,0" Background="MediumSeaGreen" Command="{Binding StartAlgorithm}">
+                            <TextBlock Text="Play" Style="{StaticResource ButtonTextStyle}"></TextBlock>
                         </Button>
-                        <Button Margin="0,0,15,0" Padding="10,10,10,10" Background="Orange">
-                            <TextBlock Text="Pause"></TextBlock>
+                        <Button Margin="0,0,15,0" Padding="10,0,10,0" Background="Orange" Command="{Binding PauseAlgorithm}">
+                            <TextBlock Text="Pause" Style="{StaticResource ButtonTextStyle}"></TextBlock>
                         </Button>
-                        <Button Padding="10,10,10,10" Background="IndianRed">
-                            <TextBlock Text="Stop"></TextBlock>
+                        <Button Padding="10,0,10,0"  Background="IndianRed" Command="{Binding StopAlgorithm}">
+                            <TextBlock Text="Stop" Style="{StaticResource ButtonTextStyle}"></TextBlock>
                         </Button>
                     </StackPanel>
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
@@ -74,8 +83,8 @@
                             <TextBlock Text="▶" HorizontalAlignment="Center"></TextBlock>
                         </Button>
                     </StackPanel>
-                    <Slider Margin="10,10,10,0" Minimum="0" Maximum="100" Value="20"></Slider>
-                    <TextBox Margin="5,10,5,5"></TextBox>
+                    <Slider Margin="10,10,10,0" Minimum="0" Maximum="100" Value="10" ValueChanged="Slider_ValueChanged"></Slider>
+                    <TextBox Margin="5,10,5,5" IsEnabled="False" Text="{Binding TextInfo, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 </StackPanel>
             </Border>
             <Border Grid.Column="1" BorderBrush="Gray" BorderThickness="3">
