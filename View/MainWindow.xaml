@@ -5,14 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFLabs.ViewModel" d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="700">
+        SizeChanged="Window_SizeChanged"
+        Title="MainWindow" Height="Auto" Width="Auto">
 
     <Window.DataContext>
         <local:MainWindowViewModel/>
     </Window.DataContext>
 
     <Window.Resources>
-        <LinearGradientBrush x:Key="ColoredButtonGradientPlay" StartPoint="0,1" EndPoint="0,0">
+        <LinearGradientBrush x:Key="ColoredButtonGradientPlay" StartPoint="0,1" EndPoint="0,0" >
             <GradientStop Color="LightGreen" Offset="1.0"/>
             <GradientStop Color="Green" Offset="0.0"/>
         </LinearGradientBrush>
@@ -32,7 +33,8 @@
         <DrawingBrush x:Key="CosmocBackground"
                       x:Name="AnimatedStars"
                           TileMode="Tile" 
-                          Viewport="0,0,0.6,0.3" ViewportUnits="RelativeToBoundingBox"
+                          Viewport="0,0,150,150"
+                          ViewportUnits="Absolute"
                           Stretch="None">
             <DrawingBrush.RelativeTransform>
                 <TranslateTransform x:Name="BackgroundTranslate" X="0" Y="0"/>
@@ -86,6 +88,44 @@
             <Setter Property="FontWeight" Value="Heavy"/>
             <Setter Property="Foreground" Value="Wheat"/>
         </Style>
+
+        <Style x:Key="ButtonHoverTrigger" TargetType="Button">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="BackgroundBorder" 
+                            Background="{TemplateBinding Background}">
+                            <Grid>
+                                <Border x:Name="HoverOverlay"  
+                                    Opacity="0"/>
+                                <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center" 
+                                              Margin="{TemplateBinding Padding}"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="(Button.Background).(LinearGradientBrush.GradientStops)[0].(GradientStop.Offset)"  To="0.01" Duration="0:0:0.2"/>
+                                        <DoubleAnimation Storyboard.TargetProperty="(Button.Background).(LinearGradientBrush.GradientStops)[1].(GradientStop.Offset)"  From="1" To="1" BeginTime="0:0:0.05" Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="(Button.Background).(LinearGradientBrush.GradientStops)[0].(GradientStop.Offset)" To="1" Duration="0:0:0.2"/>
+                                        <DoubleAnimation Storyboard.TargetProperty="(Button.Background).(LinearGradientBrush.GradientStops)[1].(GradientStop.Offset)"  From="0"  To="0.0" BeginTime="0:0:0.05" Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -106,15 +146,18 @@
                                 <Storyboard>
                                     <DoubleAnimation 
                                         Storyboard.TargetProperty="(StackPanel.Background).(Brush.RelativeTransform).(TranslateTransform.Y)" 
-                                        From="0" To="1.2" Duration="0:0:3" RepeatBehavior="Forever"/>
+                                        From="0" To="1" Duration="0:0:3" RepeatBehavior="Forever"/>
+                                    <DoubleAnimation 
+                                        Storyboard.TargetProperty="(StackPanel.Background).(Brush.RelativeTransform).(TranslateTransform.X)" 
+                                        From="0" To="1" Duration="0:0:3" RepeatBehavior="Forever"/>
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
                     </StackPanel.Triggers>
-                    <Button Margin="10,15,10,15" Command="{Binding GenerateGraph}">
+                    <Button Margin="10,15,10,15" Command="{Binding GenerateGraph}" Click="Button_Click">
                         <TextBlock Text="Сгенерировать граф" Style="{StaticResource ButtonTextStyle}"></TextBlock>
                     </Button>
-                    <Button Margin="10,0,10,10" Background="LightGray" Command="{Binding ShowDesc}">
+                    <Button Margin="10,0,10,10" Background="LightGray" Command="{Binding ShowDesc}" Click="Button_Click">
                         <TextBlock Text="Описание алгоритма" Style="{StaticResource ButtonTextStyle}"></TextBlock>
                     </Button>
                     <Grid>
@@ -136,17 +179,17 @@
                         <Slider x:Name="SliderFrom" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,0,5,0" Background="LightGray" Minimum="0" Maximum="{Binding MaximumSliderValue, UpdateSourceTrigger=PropertyChanged}" ValueChanged="SliderFrom_ValueChanged" TickFrequency="1" IsSnapToTickEnabled="True"/>
                         <Slider x:Name="SliderTo" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="5,0,5,0" Background="LightGray" Minimum="0" Maximum="{Binding MaximumSliderValue, UpdateSourceTrigger=PropertyChanged}" ValueChanged="SliderTo_ValueChanged" TickFrequency="1" IsSnapToTickEnabled="True"/>
                     </Grid>
-                    <Button Margin="10,10,10,10" Background="LightGray" Command="{Binding StartAlgorithm}">
+                    <Button Margin="10,10,10,10" Background="LightGray" Command="{Binding StartAlgorithm}" Click="Button_Click">
                         <TextBlock Text="Начать алгоритм" Style="{StaticResource ButtonTextStyle}"></TextBlock>
                     </Button>
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                        <Button Margin="0,0,15,0" Padding="10,0,10,0" Background="{StaticResource ColoredButtonGradientPlay}" Command="{Binding StartAlgorithm}">
+                        <Button Margin="0,0,15,0" Style="{StaticResource ButtonHoverTrigger}" Padding="10,0,10,0" Background="{StaticResource ColoredButtonGradientPlay}" Command="{Binding StartAlgorithm}" Click="Button_Click">
                             <TextBlock Text="Play" Style="{StaticResource ButtonTextStyle}"></TextBlock>
                         </Button>
-                        <Button Margin="0,0,15,0" Padding="10,0,10,0" Background="{StaticResource ColoredButtonGradientPause}" Command="{Binding PauseAlgorithm}">
+                        <Button Margin="0,0,15,0" Style="{StaticResource ButtonHoverTrigger}" Padding="10,0,10,0" Background="{StaticResource ColoredButtonGradientPause}" Command="{Binding PauseAlgorithm}" Click="Button_Click">
                             <TextBlock Text="Pause" Style="{StaticResource ButtonTextStyle}"></TextBlock>
                         </Button>
-                        <Button Padding="10,0,10,0"  Background="{StaticResource ColoredButtonGradientStop}" Command="{Binding StopAlgorithm}">
+                        <Button Padding="10,0,10,0" Style="{StaticResource ButtonHoverTrigger}" Background="{StaticResource ColoredButtonGradientStop}" Command="{Binding StopAlgorithm}" Click="Button_Click">
                             <TextBlock Text="Stop" Style="{StaticResource ButtonTextStyle}"></TextBlock>
                         </Button>
                     </StackPanel>
@@ -165,12 +208,18 @@
             <Border Grid.Column="1" BorderBrush="Gray" BorderThickness="3">
                 <Grid>
                     <MediaElement x:Name="VideoPlayer" Source="{Binding VideoSource, Mode=TwoWay}" LoadedBehavior="{Binding VideoLoadedBehavior}" MediaEnded="VideoPlayer_MediaEnded" UnloadedBehavior="Manual" Visibility="{Binding IsVideoVisible, Converter={StaticResource BooleanToVisibilityConverter}}" Stretch="Fill"/>
-                    <Image x:Name="MainImage" Source="{Binding BitmapSource}" Stretch="Fill" SizeChanged="MainImage_SizeChanged" Visibility="{Binding IsImageVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <Image x:Name="MainImage" Source="{Binding BitmapSource, TargetNullValue='pack://WPFLabs:,,,/Images/WaitingCat.jpg'}" Stretch="Fill" SizeChanged="MainImage_SizeChanged" Visibility="{Binding IsImageVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 </Grid>
             </Border>
         </Grid>
-        <Menu Background="Gainsboro" BorderThickness="2" BorderBrush="Black">
-            <MenuItem Header="Файл"></MenuItem>
+        <Menu Background="Gainsboro" BorderThickness="2" BorderBrush="Black" HorizontalAlignment="Stretch">
+            <Menu.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <DockPanel HorizontalAlignment="Stretch" LastChildFill="False"/>
+                </ItemsPanelTemplate>
+            </Menu.ItemsPanel>
+            <MenuItem Header="Файл" DockPanel.Dock="Left"></MenuItem>
+            <MenuItem Click="MenuItem_Click" DockPanel.Dock="Right"></MenuItem>
         </Menu>
     </Grid>
 </Window>

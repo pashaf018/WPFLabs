@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,6 +23,8 @@ namespace WPFLabs.View
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		private MediaPlayer _clickSound;
+
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -30,7 +33,12 @@ namespace WPFLabs.View
 			var vm = DataContext as MainWindowViewModel;
 
 			vm.VideoCommand += () => { VideoPlayer.Position = TimeSpan.Zero; VideoPlayer.Play(); };
+			vm.OnVideoClose += () => { MainImage.UpdateLayout(); };
+			_clickSound = new MediaPlayer();
+			_clickSound.Open(new Uri(@"C:\ClickSound.mp3", UriKind.Absolute));
 		}
+
+
 
 		private void MainImage_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
 		{
@@ -71,6 +79,29 @@ namespace WPFLabs.View
 
 			vm.OnVideoEnded();
 			vm.VideoCommand += () => { VideoPlayer.Position = TimeSpan.Zero; VideoPlayer.Play(); };
+		}
+
+		private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+		{
+			if (Resources["CosmocBackground"] is DrawingBrush br)
+			{
+				double tileWidth = (e.NewSize.Width / 2.5) / e.NewSize.Width.ToString().Length;
+				double tileHeight = (e.NewSize.Height / 2.5) / e.NewSize.Height.ToString().Length;
+
+				br.Viewport = new Rect(0,0,tileWidth,tileHeight);
+			}
+		}
+
+		private void Button_Click(object sender, RoutedEventArgs e)
+		{
+			Random rand = new Random();
+			_clickSound.Position = TimeSpan.Zero;
+			_clickSound.Play();
+		}
+
+		private void MenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			_clickSound.Open(new Uri(@"C:\bark-fart.mp3"));
 		}
 	}
 }

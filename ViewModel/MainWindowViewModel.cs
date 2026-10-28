@@ -34,6 +34,7 @@ namespace WPFLabs.ViewModel
 		private string _textInfo;
 		private int _sliderSpeed;
 		private bool _isVideoVisible = true;
+		private bool _isImageVisible = false;
 		private Uri _videoSource;
 		private MediaState _videoLoadedBehavior = MediaState.Manual;
 
@@ -51,9 +52,9 @@ namespace WPFLabs.ViewModel
 
 		public int SliderSpeed { get => _sliderSpeed; set { _sliderSpeed = value; ChangeAlgorithmSpeed(); } }
 
-		public bool IsVideoVisible { get => _isVideoVisible; set { _isVideoVisible=value; OnPropertyChanged(); } }
+		public bool IsVideoVisible { get => _isVideoVisible; set { _isVideoVisible=value; OnPropertyChanged(); IsImageVisible = true; } }
 
-		public bool IsImageVisible => !IsVideoVisible;
+		public bool IsImageVisible { get => _isImageVisible; set { _isImageVisible = value; OnPropertyChanged(); } }
 
 		public Uri VideoSource { get => _videoSource; set { _videoSource = value; OnPropertyChanged(); } }
 
@@ -96,7 +97,7 @@ namespace WPFLabs.ViewModel
 		public ICommand StopAlgorithm { get; }
 
 		public event Action VideoCommand;
-		public event Action OnVideoEnd;
+		public event Action OnVideoClose;
 
 		public MainWindowViewModel()
 		{
@@ -117,10 +118,21 @@ namespace WPFLabs.ViewModel
 			VideoCommand?.Invoke();
 		}
 
+		private void VideoClosed()
+		{
+			OnVideoClose?.Invoke();
+		}
+
+
+
 		private void GenerateGraphLogic(object parameter)
 		{
-			VideoLoadedBehavior = MediaState.Stop;
-			IsVideoVisible = false;
+			if (IsVideoVisible)
+			{
+				VideoLoadedBehavior = MediaState.Stop;
+				IsVideoVisible = false;
+				VideoClosed();
+			}
 
 			try
 			{
