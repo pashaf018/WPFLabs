@@ -25,6 +25,11 @@ namespace WPFLabs.View
 		public MainWindow()
 		{
 			InitializeComponent();
+			DataContext = new MainWindowViewModel();
+
+			var vm = DataContext as MainWindowViewModel;
+
+			vm.VideoCommand += () => { VideoPlayer.Position = TimeSpan.Zero; VideoPlayer.Play(); };
 		}
 
 		private void MainImage_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
@@ -58,6 +63,14 @@ namespace WPFLabs.View
 			{
 				viewModel.SliderSpeed = (int)e.NewValue;
 			}
+		}
+
+		private void VideoPlayer_MediaEnded(object sender, RoutedEventArgs e)
+		{
+			var vm = DataContext as MainWindowViewModel;
+
+			vm.OnVideoEnded();
+			vm.VideoCommand += () => { VideoPlayer.Position = TimeSpan.Zero; VideoPlayer.Play(); };
 		}
 	}
 }

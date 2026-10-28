@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Security.Cryptography;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
@@ -17,11 +18,14 @@ namespace WPFLabs.ViewModel
 	public class MainWindowViewModel : ViewModelBase
 	{
 		private string defaultImagePath = @"C:\WaitingCat.jpg";
+		private string videoSource = @"C:\MaxwellCat.mp4";
+
 		private DrawingGraph _drawingGraph;
 		private BaseAlgorithm _algorithm;
 		private IProgramStarter _programStarter;
 		private BitmapSource _bitmapSource;
 		private BitmapSource _graphImage;
+
 		private int _canvasHeight;
 		private int _canvasWidth;
 		private int numericUpDownFrom;
@@ -29,6 +33,9 @@ namespace WPFLabs.ViewModel
 		private int _maximumSliderValue;
 		private string _textInfo;
 		private int _sliderSpeed;
+		private bool _isVideoVisible = true;
+		private Uri _videoSource;
+		private MediaState _videoLoadedBehavior = MediaState.Manual;
 
 		public int CanvasHeight { get => _canvasHeight; set { _canvasHeight = value; } }
 
@@ -44,11 +51,15 @@ namespace WPFLabs.ViewModel
 
 		public int SliderSpeed { get => _sliderSpeed; set { _sliderSpeed = value; ChangeAlgorithmSpeed(); } }
 
-		public BitmapSource GraphImage
-		{
-			get => _graphImage;
-			set { _graphImage = value; OnPropertyChanged(); }
-		}
+		public bool IsVideoVisible { get => _isVideoVisible; set { _isVideoVisible=value; OnPropertyChanged(); } }
+
+		public bool IsImageVisible => !IsVideoVisible;
+
+		public Uri VideoSource { get => _videoSource; set { _videoSource = value; OnPropertyChanged(); } }
+
+		public MediaState VideoLoadedBehavior { get => _videoLoadedBehavior; set { _videoLoadedBehavior = value; OnPropertyChanged(); } }
+
+		public BitmapSource GraphImage{ get => _graphImage; set { _graphImage = value; OnPropertyChanged(); } }
 
 		public BitmapSource BitmapSource
 		{
@@ -84,6 +95,9 @@ namespace WPFLabs.ViewModel
 		public ICommand PauseAlgorithm { get; }
 		public ICommand StopAlgorithm { get; }
 
+		public event Action VideoCommand;
+		public event Action OnVideoEnd;
+
 		public MainWindowViewModel()
 		{
 			GenerateGraph = new RelayCommand(GenerateGraphLogic);
@@ -91,10 +105,23 @@ namespace WPFLabs.ViewModel
 			StartAlgorithm = new RelayCommand(StartDjikstraAlgorithm);
 			PauseAlgorithm = new RelayCommand(PauseDjikstraAlgorithm);
 			StopAlgorithm = new RelayCommand(StopDjikstraAlgorithm);
+			VideoSource = new Uri(videoSource, UriKind.Absolute);
+			if (IsVideoVisible)
+			{
+				VideoLoadedBehavior = MediaState.Play;
+			}
+		}
+
+		public void OnVideoEnded()
+		{
+			VideoCommand?.Invoke();
 		}
 
 		private void GenerateGraphLogic(object parameter)
 		{
+			VideoLoadedBehavior = MediaState.Stop;
+			IsVideoVisible = false;
+
 			try
 			{
 				_drawingGraph = new((int)CanvasWidth, (int)CanvasHeight);

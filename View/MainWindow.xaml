@@ -12,6 +12,69 @@
     </Window.DataContext>
 
     <Window.Resources>
+        <LinearGradientBrush x:Key="ColoredButtonGradientPlay" StartPoint="0,1" EndPoint="0,0">
+            <GradientStop Color="LightGreen" Offset="1.0"/>
+            <GradientStop Color="Green" Offset="0.0"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="ColoredButtonGradientPause" StartPoint="0,1" EndPoint="0,0">
+            <GradientStop Color="Orange" Offset="1.0"/>
+            <GradientStop Color="OrangeRed" Offset="0.0"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="ColoredButtonGradientStop" StartPoint="0,1" EndPoint="0,0">
+            <GradientStop Color="PaleVioletRed" Offset="1.0"/>
+            <GradientStop Color="Red" Offset="0.0"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="CosmosGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#03030F" Offset="0.0"/>
+            <GradientStop Color="#0A0616" Offset="0.5"/>
+            <GradientStop Color="#02010A" Offset="1.0"/>
+        </LinearGradientBrush>
+        <DrawingBrush x:Key="CosmocBackground"
+                      x:Name="AnimatedStars"
+                          TileMode="Tile" 
+                          Viewport="0,0,0.6,0.3" ViewportUnits="RelativeToBoundingBox"
+                          Stretch="None">
+            <DrawingBrush.RelativeTransform>
+                <TranslateTransform x:Name="BackgroundTranslate" X="0" Y="0"/>
+            </DrawingBrush.RelativeTransform>
+            <DrawingBrush.Drawing>
+                <DrawingGroup>
+                    <GeometryDrawing Brush="Transparent">
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry Rect="0,0,150,150"/>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+
+                    <GeometryDrawing Brush="#FFFFFF">
+                        <GeometryDrawing.Geometry>
+                            <EllipseGeometry Center="25,40" RadiusX="5" RadiusY="5"/>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+
+                    <GeometryDrawing Brush="#80FFFFFF">
+                        <GeometryDrawing.Geometry>
+                            <EllipseGeometry Center="90,20" RadiusX="3" RadiusY="3"/>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+
+                    <GeometryDrawing Brush="#A0A0E0FF">
+                        <GeometryDrawing.Geometry>
+                            <EllipseGeometry Center="130,110" RadiusX="3.6" RadiusY="3.6"/>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+
+                    <GeometryDrawing Brush="#40FFFFFF">
+                        <GeometryDrawing.Geometry>
+                            <EllipseGeometry Center="50,120" RadiusX="3.6" RadiusY="3.6"/>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+
         <Style x:Key="ButtonTextStyle" TargetType="TextBlock">
             <Setter Property="FontFamily" Value="Rubik"/>
             <Setter Property="FontSize" Value="15"/>
@@ -21,21 +84,33 @@
             <Setter Property="FontFamily" Value="Rubik"/>
             <Setter Property="FontSize" Value="10"/>
             <Setter Property="FontWeight" Value="Heavy"/>
+            <Setter Property="Foreground" Value="Wheat"/>
         </Style>
     </Window.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="1" x:Name="BottomGrid">
+        <Grid Grid.Row="1" x:Name="BottomGrid" Background="White">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="9*"></ColumnDefinition>
                 <ColumnDefinition Width="20*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Border Grid.Column="0" BorderBrush="Gray" BorderThickness="3">
-                <StackPanel Background="Gainsboro">
+            <Border Grid.Column="0" BorderBrush="Gray" BorderThickness="3" Background="{StaticResource CosmosGradient}">
+                <StackPanel Background="{StaticResource CosmocBackground}">
+                    <StackPanel.Triggers>
+                        <EventTrigger RoutedEvent="StackPanel.Loaded">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation 
+                                        Storyboard.TargetProperty="(StackPanel.Background).(Brush.RelativeTransform).(TranslateTransform.Y)" 
+                                        From="0" To="1.2" Duration="0:0:3" RepeatBehavior="Forever"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </StackPanel.Triggers>
                     <Button Margin="10,15,10,15" Command="{Binding GenerateGraph}">
                         <TextBlock Text="Сгенерировать граф" Style="{StaticResource ButtonTextStyle}"></TextBlock>
                     </Button>
@@ -65,13 +140,13 @@
                         <TextBlock Text="Начать алгоритм" Style="{StaticResource ButtonTextStyle}"></TextBlock>
                     </Button>
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                        <Button Margin="0,0,15,0" Padding="10,0,10,0" Background="MediumSeaGreen" Command="{Binding StartAlgorithm}">
+                        <Button Margin="0,0,15,0" Padding="10,0,10,0" Background="{StaticResource ColoredButtonGradientPlay}" Command="{Binding StartAlgorithm}">
                             <TextBlock Text="Play" Style="{StaticResource ButtonTextStyle}"></TextBlock>
                         </Button>
-                        <Button Margin="0,0,15,0" Padding="10,0,10,0" Background="Orange" Command="{Binding PauseAlgorithm}">
+                        <Button Margin="0,0,15,0" Padding="10,0,10,0" Background="{StaticResource ColoredButtonGradientPause}" Command="{Binding PauseAlgorithm}">
                             <TextBlock Text="Pause" Style="{StaticResource ButtonTextStyle}"></TextBlock>
                         </Button>
-                        <Button Padding="10,0,10,0"  Background="IndianRed" Command="{Binding StopAlgorithm}">
+                        <Button Padding="10,0,10,0"  Background="{StaticResource ColoredButtonGradientStop}" Command="{Binding StopAlgorithm}">
                             <TextBlock Text="Stop" Style="{StaticResource ButtonTextStyle}"></TextBlock>
                         </Button>
                     </StackPanel>
@@ -88,7 +163,10 @@
                 </StackPanel>
             </Border>
             <Border Grid.Column="1" BorderBrush="Gray" BorderThickness="3">
-                <Image x:Name="MainImage" Source="{Binding BitmapSource}" Stretch="Fill" SizeChanged="MainImage_SizeChanged"/>
+                <Grid>
+                    <MediaElement x:Name="VideoPlayer" Source="{Binding VideoSource, Mode=TwoWay}" LoadedBehavior="{Binding VideoLoadedBehavior}" MediaEnded="VideoPlayer_MediaEnded" UnloadedBehavior="Manual" Visibility="{Binding IsVideoVisible, Converter={StaticResource BooleanToVisibilityConverter}}" Stretch="Fill"/>
+                    <Image x:Name="MainImage" Source="{Binding BitmapSource}" Stretch="Fill" SizeChanged="MainImage_SizeChanged" Visibility="{Binding IsImageVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                </Grid>
             </Border>
         </Grid>
         <Menu Background="Gainsboro" BorderThickness="2" BorderBrush="Black">
